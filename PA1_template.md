@@ -1,14 +1,10 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 
-```{r echo=TRUE}
+
+```r
 #original data
 raw_data <- read.csv('activity.csv')
 #steps per day
@@ -21,40 +17,69 @@ names(spi)[2] <- c('mean_steps')
 
 ## What is mean total number of steps taken per day?
 Plotting a histogram
-```{r echo=TRUE}
+
+```r
 library(ggplot2)
 qplot(sum_steps, data=spd, 
       main='Histogram of Number of Steps Taken per Day', xlab='steps', 
       binwidth=5000,fill=I('darkgreen'))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+
 Calculating mean and median of the number of steps 
-```{r echo=TRUE}
+
+```r
 mean(spd$sum_steps, na.rm=TRUE)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(spd$sum_steps, na.rm=TRUE)
+```
+
+```
+## [1] 10765
 ```
 
 
 ## What is the average daily activity pattern?
 Plotting average number of steps per interval
-```{r echo=TRUE}
+
+```r
 qplot(interval, mean_steps, data=spi, 
       main='Average Number of Steps per Interval', 
       geom='line', color=I('darkblue'))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
 Interval with maximum average number of steps over all days
-```{r echo=TRUE}
+
+```r
 spi[ spi$mean_steps == max(spi$mean_steps), ]$interval
+```
+
+```
+## [1] 835
 ```
 
 ## Imputing missing values
 Total number of missing values in the dataset (i.e. the total number of rows with NAs)
-```{r echo=TRUE}
+
+```r
 sum(!complete.cases(raw_data))
 ```
+
+```
+## [1] 2304
+```
 Create a new dataset that is equal to the original dataset but with the missing data filled with average number of steps for this interval over all days
-```{r echo=TRUE}
+
+```r
 #copy raw data to new object
 raw_data_nona <- raw_data
 #replace missing number of steps values in each row with average for that interval  
@@ -71,17 +96,32 @@ names(spi)[2] <- c('mean_steps')
 ```
 
 Make a histogram of the total number of steps taken each day
-```{r echo=TRUE}
+
+```r
 library(ggplot2)
 qplot(sum_steps, data=spd, 
       main='Histogram of Number of Steps Taken per Day', xlab='steps', 
       binwidth=5000,fill=I('darkred'))
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
+
 Calculate and report the mean and median total number of steps taken per day
-```{r echo=TRUE}
+
+```r
 mean(spd$sum_steps, na.rm=TRUE)
+```
+
+```
+## [1] 10889.8
+```
+
+```r
 median(spd$sum_steps, na.rm=TRUE)
+```
+
+```
+## [1] 11015
 ```
 As you can see this values are slightly above the results from data where NAs were not replaced by averages. This is the impact of imputing missing data on the estimates of the total daily number of steps.
 
@@ -89,7 +129,8 @@ As you can see this values are slightly above the results from data where NAs we
 ## Are there differences in activity patterns between weekdays and weekends?
 Create two new datasets for average number of steps for each interval on WE and during the week, using data with imputted missing values
 
-```{r echo=TRUE}
+
+```r
 library(lubridate)
 spi_we <- aggregate(. ~ interval, 
                     data=raw_data_nona[wday(raw_data$date) %in% c(1,7),c(1,3)], 
@@ -101,12 +142,19 @@ spi_nowe <- aggregate(. ~ interval,
 ```
 
 Plot the data to see the difference
-```{r echo=TRUE}
+
+```r
 qplot(interval, steps, data=spi_we, 
       main='Average Number of Steps per Interval (Weekends)', 
       geom='line', color=I('darkgreen'))
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
+
+```r
 qplot(interval, steps, data=spi_nowe, 
       main='Average Number of Steps per Interval (During the Week)', 
       geom='line', color=I('darkred'))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-2.png) 
